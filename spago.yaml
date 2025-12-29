@@ -13,8 +13,10 @@ package:
     - transformers
     - tuples
     - unsafe-coerce
+    - webb-array
     - webb-refer
     - webb-monad
+    - webb-mutex
     - webb-stateful
     - webb-random
     - profunctor-lenses
@@ -35,4 +37,7 @@ workspace:
     webb-monad: 0.0.2
     webb-stateful: 0.0.2
     webb-random: 0.0.1
+    webb-mutex: 0.0.4
+    webb-array: 
+      path: '../webb-array'
 

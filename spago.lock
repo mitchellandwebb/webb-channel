@@ -18,7 +18,9 @@
             "transformers",
             "tuples",
             "unsafe-coerce",
+            "webb-array",
             "webb-monad",
+            "webb-mutex",
             "webb-random",
             "webb-refer",
             "webb-stateful"
@@ -76,7 +78,9 @@
             "typelevel-prelude",
             "unfoldable",
             "unsafe-coerce",
+            "webb-array",
             "webb-monad",
+            "webb-mutex",
             "webb-random",
             "webb-refer",
             "webb-stateful"
@@ -738,7 +742,11 @@
     },
     "extra_packages": {
       "spec-discovery": "8.2.0",
+      "webb-array": {
+        "path": "../webb-array"
+      },
       "webb-monad": "0.0.2",
+      "webb-mutex": "0.0.4",
       "webb-random": "0.0.1",
       "webb-refer": "0.0.3",
       "webb-stateful": "0.0.2",
@@ -1867,6 +1875,16 @@
       "integrity": "sha256-IqIYW4Vkevn8sI+6aUwRGvd87tVL36BBeOr0cGAE7t0=",
       "dependencies": []
     },
+    "webb-array": {
+      "type": "local",
+      "path": "../webb-array",
+      "dependencies": [
+        "arrays",
+        "foldable-traversable",
+        "maybe",
+        "prelude"
+      ]
+    },
     "webb-monad": {
       "type": "registry",
       "version": "0.0.2",
@@ -1886,6 +1904,24 @@
         "newtype",
         "prelude",
         "transformers"
+      ]
+    },
+    "webb-mutex": {
+      "type": "registry",
+      "version": "0.0.4",
+      "integrity": "sha256-t1oV8eqJ5+NsZjNRqbO1jcDh/r0zf7JKNUCGcqZFrac=",
+      "dependencies": [
+        "aff",
+        "arrays",
+        "effect",
+        "exceptions",
+        "foldable-traversable",
+        "integers",
+        "maybe",
+        "newtype",
+        "prelude",
+        "webb-monad",
+        "webb-refer"
       ]
     },
     "webb-random": {
