@@ -54,3 +54,6 @@ value = unwrap >>> _.value
 
 id :: SendItem -> Id
 id = unwrap >>> _.id
+
+hasId :: Id -> SendItem -> Boolean
+hasId id' item = id item == id'
