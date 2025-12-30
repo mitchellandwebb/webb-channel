@@ -6,6 +6,7 @@ import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
 import Webb.Channel.Data.CMaybe (CMaybe)
 import Webb.Channel.Data.CMaybe as CMaybe
+import Webb.Channel.Internal.Closer as Closer
 import Webb.Channel.Internal.Receiver as Receiver
 import Webb.Channel.Internal.Sender as Sender
 import Webb.Channel.Internal.State (CState)
@@ -61,5 +62,5 @@ receive chan = do
 -- will only take a "Closed" value from the buffer.
 close :: Channel -> Aff Unit
 close chan = do
-  c <- Closer.new
+  c <- Closer.new chan
   Closer.close c
