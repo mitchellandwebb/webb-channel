@@ -17,7 +17,7 @@ type Channel = CState
 -- have to wait, in order, for the send to complete.
 send :: forall a. Channel -> a -> Aff Unit
 send chan a = do
-  s <- Sender.new
+  s <- Sender.new chan
   success <- Sender.send s
   
   -- Do we succeed in sending immediately?
@@ -28,9 +28,10 @@ send chan a = do
 -- take, then we have to wait for a value.
 receive :: forall a. Channel -> Aff (Maybe a)
 receive chan = do 
-  r <- Receiver.new
+  r <- Receiver.new chan
   mvalue <- Receiver.receive r
   case mvalue of
+    -- Did we succeed in getting a value immediately?
     Just value -> do
       pure $ Just value
     Nothing -> do
