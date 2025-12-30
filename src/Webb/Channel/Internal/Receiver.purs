@@ -14,7 +14,7 @@ import Webb.Channel.Data.SendItem as SItem
 import Webb.Channel.Data.SendQueue as SQueue
 import Webb.Channel.Internal.State (CState)
 import Webb.Channel.Internal.State as State
-import Webb.Monad.Prelude (forceMaybe', onCancel, (||=))
+import Webb.Monad.Prelude (forceMaybe', onCancel, (||=), (&&=))
 import Webb.Result as Result
 
 
@@ -62,12 +62,23 @@ receive r = do
 -- remaining value in the buffer.
 wait :: forall a. Receiver -> Aff (Maybe a)
 wait r = do
-  item <- buildItem
-  enqueue item
-  mresult <- await item
-  pure $ unvoided <$> mresult
+  ifM (isClosed) (do 
+    -- We already failed to get the value immediately, so we know
+    -- there are no senders.
+    -- So if it's closed, then a sender will never come.
+    pure Nothing 
+  ) (do 
+    item <- buildItem
+    enqueue item
+    mresult <- await item
+    pure $ unvoided <$> mresult
+  )
   
   where
+  isClosed = do
+    this <- getThis r
+    State.isClosed this
+
   buildItem = do
     this <- getThis r
     id <- State.nextId this

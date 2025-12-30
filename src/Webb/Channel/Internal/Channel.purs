@@ -43,7 +43,7 @@ receive chan = do
   r <- Receiver.new chan
   mvalue <- Receiver.receive r
   case mvalue of
-    -- Did we succeed in receiving a value immediately?
+    -- Did we receive a value immediately?
     Just value -> do
       pure $ CMaybe.Open value
     Nothing -> do
@@ -54,3 +54,12 @@ receive chan = do
           pure CMaybe.Closed
         Just value -> do 
           pure $ CMaybe.Open value
+
+-- Close the channel. Pending and future sends will fail with a boolean flag.
+-- Buffered sends will succeed and will continue to be received by any
+-- receivers. Once the send buffer is empty, pending and future receivers
+-- will only take a "Closed" value from the buffer.
+close :: Channel -> Aff Unit
+close chan = do
+  c <- Closer.new
+  Closer.close c
