@@ -24,6 +24,8 @@ newtype SendQueue = B
   { array :: Array SendItem
   , size :: SendSize
   }
+  
+type SQueue = SendQueue
 
 _array :: forall a r. Lens' { array :: a | r } a
 _array = prop (Proxy :: Proxy "array")

@@ -33,3 +33,6 @@ id = unwrap >>> _.id
 
 result :: ReceiveItem -> Result Void
 result = unwrap >>> _.result
+
+hasId :: Id -> RItem -> Boolean
+hasId id' item = id item == id'
