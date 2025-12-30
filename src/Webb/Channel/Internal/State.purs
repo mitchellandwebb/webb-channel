@@ -37,6 +37,9 @@ close this = this.open := false
 
 sendSize :: forall m . MonadEffect m => CState -> m Int
 sendSize this = SQueue.size <: this.senders
+
+receiveSize :: forall m . MonadEffect m => CState -> m Int
+receiveSize this = RQueue.size <: this.receivers
   
 hasSenders :: forall m . MonadEffect m => CState -> m Boolean
 hasSenders this = notM $ SQueue.isEmpty <: this.senders
