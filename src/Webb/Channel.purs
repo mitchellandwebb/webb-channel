@@ -1,4 +1,9 @@
-module Webb.Channel where
+module Webb.Channel 
+( module P
+, Channel, Chan, newChannel, newChan, send, trySend
+, receive, tryReceive, close, isOpen, isClosed, infinite, finite
+)
+where
 
 import Prelude
 
@@ -8,6 +13,7 @@ import Effect.Aff (Aff)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (class MonadEffect, liftEffect)
 import Webb.Channel.Data.CMaybe (CMaybe)
+import Webb.Channel.Data.CMaybe (CMaybe(..)) as P
 import Webb.Channel.Data.SendQueue (SendSize)
 import Webb.Channel.Data.SendQueue as SItem
 import Webb.Channel.Internal.Channel as Chan
