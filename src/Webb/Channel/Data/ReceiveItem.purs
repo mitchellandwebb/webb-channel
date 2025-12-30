@@ -2,6 +2,7 @@ module Webb.Channel.Data.ReceiveItem where
 
 import Prelude
 
+import Data.Maybe (Maybe)
 import Data.Newtype (class Newtype, unwrap, wrap)
 import Webb.Channel.Data.Id (Id)
 import Webb.Result (Result)
@@ -11,7 +12,7 @@ import Webb.Result (Result)
 
 newtype ReceiveItem = R
   { id :: Id
-  , result :: Result Void -- Receive a delivered value.
+  , result :: Result (Maybe Void) -- Receive a delivered value, or a close
   }
   
 type RItem = ReceiveItem
@@ -25,13 +26,13 @@ derive instance Newtype ReceiveItem _
 instance Show ReceiveItem where
   show (R s) = show { id: s.id }
   
-newItem :: Id -> Result Void -> ReceiveItem
+newItem :: Id -> Result (Maybe Void) -> ReceiveItem
 newItem id' result' = wrap { id: id', result: result' }
 
 id :: ReceiveItem -> Id
 id = unwrap >>> _.id
 
-result :: ReceiveItem -> Result Void
+result :: ReceiveItem -> Result (Maybe Void)
 result = unwrap >>> _.result
 
 hasId :: Id -> RItem -> Boolean

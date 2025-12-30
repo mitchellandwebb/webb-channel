@@ -45,6 +45,9 @@ newItem' a id' result' = wrap
 
 voided :: forall a. a -> Void
 voided = unsafeCoerce
+
+unvoided :: forall a. Void -> a
+unvoided = unsafeCoerce
   
 result :: SendItem -> Result Boolean
 result = unwrap >>> _.result

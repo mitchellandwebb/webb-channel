@@ -54,6 +54,7 @@ send s a = do
   nextReceiver = do
     this <- getThis s
     mitem <- RQueue.first <: this.receivers
+    RQueue.drop 1 :> this.receivers
     forceMaybe' "Missing a first item" mitem
     
   deliver ritem value = do
