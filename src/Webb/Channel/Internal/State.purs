@@ -4,39 +4,42 @@ import Prelude
 import Webb.State.Prelude
 
 import Effect.Class (class MonadEffect)
-import Webb.Channel.Data.Buffer (Buffer)
-import Webb.Channel.Data.Buffer as Buffer
+import Webb.Channel.Data.ReceiveQueue (RQueue)
+import Webb.Channel.Data.ReceiveQueue as RQueue
+import Webb.Channel.Data.SendQueue (SQueue)
+import Webb.Channel.Data.SendQueue as SQueue
 import Webb.Monad.Prelude (notM)
-import Webb.Mutex (Mutex, newMutex)
-import Webb.Mutex as Mutex
 
-
-
-type ChannelState a = 
-  { buffer :: ShowRef (Buffer a)
+type ChannelState = 
+  { senders :: ShowRef (SQueue)
+  , receivers :: ShowRef (RQueue)
   , open :: ShowRef Boolean
   }
 
-type CState a = ChannelState a
+type CState = ChannelState
   
-newState :: forall m a. MonadEffect m => 
-  Buffer.BufferSize -> m (ChannelState a)
+newState :: forall m . MonadEffect m => 
+  SQueue.SendSize -> m (ChannelState)
 newState size' = do
-  buffer <- newShowRef $ Buffer.newBuffer size'
+  senders <- newShowRef $ SQueue.newQueue size'
+  receivers <- newShowRef $ RQueue.newQueue
   open <- newShowRef $ true
-  pure { buffer, open }
+  pure { senders, open, receivers }
   
-isOpen :: forall m a. MonadEffect m => CState a -> m Boolean
+isOpen :: forall m . MonadEffect m => CState -> m Boolean
 isOpen this = do aread this.open
 
-isClosed :: forall m a. MonadEffect m => CState a -> m Boolean
+isClosed :: forall m . MonadEffect m => CState -> m Boolean
 isClosed = notM <<< isOpen
 
-size :: forall m a. MonadEffect m => CState a -> m Int
-size this = Buffer.size <: this.buffer
-  
-hasSenders :: forall m a. MonadEffect m => CState a -> m Boolean
-hasSenders this = Mutex.isLocked this.sendQueue
+close :: forall m. MonadEffect m => CState -> m Unit
+close this = this.open := false
 
-hasReceivers :: forall m a. MonadEffect m => CState a -> m Boolean
-hasReceivers this = Mutex.isLocked this.sendQueue
+sendSize :: forall m . MonadEffect m => CState -> m Int
+sendSize this = SQueue.size <: this.senders
+  
+hasSenders :: forall m . MonadEffect m => CState -> m Boolean
+hasSenders this = notM $ SQueue.isEmpty <: this.senders
+
+hasReceivers :: forall m . MonadEffect m => CState -> m Boolean
+hasReceivers this = notM $ RQueue.isEmpty <: this.receivers
