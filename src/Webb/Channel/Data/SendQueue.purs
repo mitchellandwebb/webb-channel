@@ -79,3 +79,15 @@ drop n = modify $ over _array (Array.drop n)
 -- one waiting for it has been _cancelled_.
 removeId :: Id -> SendQueue -> SendQueue
 removeId id = modify $ over _array (Array.reject (SItem.hasId id))
+
+-- These are the pending send items that aren't yet in the buffer
+pending :: SendQueue -> Array SendItem
+pending (B s) = case s.size of
+  Infinite -> []
+  Finite n -> Array.drop n s.array
+  
+-- Get rid of the pending items.
+removePending :: SendQueue -> SendQueue
+removePending this@(B s) = let 
+  count = Array.size $ pending this
+  in wrap $ over _array (Array.dropEnd count) s
