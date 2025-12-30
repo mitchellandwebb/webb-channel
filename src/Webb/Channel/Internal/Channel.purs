@@ -4,6 +4,7 @@ import Prelude
 
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
+import Effect.Class (class MonadEffect)
 import Webb.Channel.Data.CMaybe (CMaybe)
 import Webb.Channel.Data.CMaybe as CMaybe
 import Webb.Channel.Internal.Closer as Closer
@@ -11,6 +12,7 @@ import Webb.Channel.Internal.Receiver as Receiver
 import Webb.Channel.Internal.Sender as Sender
 import Webb.Channel.Internal.State (CState)
 import Webb.Channel.Internal.State as State
+import Webb.Monad.Prelude ((||=))
 
 
 
@@ -25,17 +27,19 @@ type Channel = CState
 -- and see whether we succeed.
 send :: forall a. Channel -> a -> Aff Boolean
 send chan a = do
-  isOpen <- State.isOpen chan
-  if isOpen then do
+  ifM isOpen (do
     s <- Sender.new chan
-    success <- Sender.send s a
-    if success then do
-      pure true
-    else do
-      Sender.wait s a
-  else do
+    _sendImmediate s a ||= Sender.wait s a
+  ) (do
     pure false
+  )
+  where
+  isOpen = State.isOpen chan
   
+_sendImmediate :: forall m a. MonadEffect m => 
+  Sender.Sender -> a -> m Boolean
+_sendImmediate s a = do 
+  Sender.send s a ||= Sender.tryBuffer s a
 
 -- Receiving a value may hang, because if no value is present to
 -- take, then we have to wait for a value.
@@ -64,3 +68,27 @@ close :: Channel -> Aff Unit
 close chan = do
   c <- Closer.new chan
   Closer.close c
+  
+-- Try to send the value immediately. Return whether we could do
+-- so or not. Does not distinguish between reason for failure
+-- (closed, or needed to wait)
+trySend :: forall a m. MonadEffect m => Channel -> a -> m Boolean
+trySend chan a = do
+  ifM isOpen (do 
+    s <- Sender.new chan
+    _sendImmediate s a
+  ) (do 
+    pure false 
+  )
+  where
+  isOpen = State.isOpen chan
+  
+-- Try to receive a value immediately if there's anything in the queue.
+-- No waiting is involved. Closing does not affect this -- we can always
+-- try to receive from a closed channel; we just might not succeed.
+tryReceive :: forall a m. MonadEffect m => Channel -> m (Maybe a)
+tryReceive chan = do
+  r <- Receiver.new chan
+  Receiver.receive r
+
+  

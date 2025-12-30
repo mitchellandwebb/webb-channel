@@ -6,7 +6,7 @@ import Webb.State.Prelude
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype, unwrap, wrap)
 import Effect.Aff (Aff)
-import Effect.Class (class MonadEffect)
+import Effect.Class (class MonadEffect, liftEffect)
 import Webb.Channel.Data.ReceiveItem as RItem
 import Webb.Channel.Data.ReceiveQueue as RQueue
 import Webb.Channel.Data.SendItem (unvoided)
@@ -14,7 +14,7 @@ import Webb.Channel.Data.SendItem as SItem
 import Webb.Channel.Data.SendQueue as SQueue
 import Webb.Channel.Internal.State (CState)
 import Webb.Channel.Internal.State as State
-import Webb.Monad.Prelude (forceMaybe', onCancel, (||=), (&&=))
+import Webb.Monad.Prelude (forceMaybe', onCancel, (||=))
 import Webb.Result as Result
 
 
@@ -28,7 +28,7 @@ new state = do pure $ wrap state
 getThis :: forall m. MonadEffect m => Receiver -> m CState
 getThis r = do pure $ unwrap r
 
-receive :: forall a. Receiver -> Aff (Maybe a)
+receive :: forall m a. MonadEffect m => Receiver -> m (Maybe a)
 receive r = do 
   ifM (hasReceivers ||= noSender) (do 
     s <- nextSender 
@@ -38,7 +38,7 @@ receive r = do
     pure Nothing  
   )
   where
-  hasReceivers :: Aff Boolean
+  hasReceivers :: m Boolean
   hasReceivers = do
     this <- getThis r
     State.hasReceivers this
@@ -51,7 +51,7 @@ receive r = do
     this <- getThis r
     mitem <- SQueue.first <: this.senders
     SQueue.drop 1 :> this.senders
-    forceMaybe' "No first sender" mitem
+    forceMaybe' "No first sender" mitem # liftEffect
   
   notifySender item = do
     let result = SItem.result item
