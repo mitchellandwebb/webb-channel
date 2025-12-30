@@ -45,13 +45,18 @@ derive instance Generic SendSize _
 instance Show SendSize where show = genericShow
 
 newQueue :: SendSize -> SendQueue 
-newQueue size' = fromArray size' []
+newQueue size' = fromArray (actual size') []
 
 toArray :: SendQueue -> Array SItem
 toArray = unwrap >>> _.array
 
 fromArray :: SendSize -> Array SItem -> SendQueue 
-fromArray size' arr = wrap { array: arr, size: size' }
+fromArray size' arr = wrap { array: arr, size: (actual size') }
+
+actual :: SendSize -> SendSize
+actual = case _ of
+  Infinite -> Infinite
+  Finite n -> Finite (max 0 n)
 
 -- Before we add, we have to check if the buffer is full according
 -- to its size.

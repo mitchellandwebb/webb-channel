@@ -26,6 +26,9 @@ newChannel :: forall m a. MonadEffect m => SendSize -> m (Channel a)
 newChannel size = do 
   state <- State.newState size
   pure $ C state
+
+newChan :: forall m a. MonadEffect m => SendSize -> m (Channel a)
+newChan = newChannel
   
 send :: forall m a. MonadAff m => Chan a -> a -> m Boolean
 send chan a = aff chan $ 
