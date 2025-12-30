@@ -746,7 +746,9 @@
         "path": "../webb-array"
       },
       "webb-monad": "0.0.2",
-      "webb-mutex": "0.0.4",
+      "webb-mutex": {
+        "path": "../webb-mutex"
+      },
       "webb-random": "0.0.1",
       "webb-refer": "0.0.3",
       "webb-stateful": "0.0.2",
@@ -1907,9 +1909,8 @@
       ]
     },
     "webb-mutex": {
-      "type": "registry",
-      "version": "0.0.4",
-      "integrity": "sha256-t1oV8eqJ5+NsZjNRqbO1jcDh/r0zf7JKNUCGcqZFrac=",
+      "type": "local",
+      "path": "../webb-mutex",
       "dependencies": [
         "aff",
         "arrays",
