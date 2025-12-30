@@ -11,7 +11,7 @@ import Webb.Result (Result)
 
 
 newtype SendItem = S 
-  { result :: Result Unit -- To notify the sender, if it is waiting.
+  { result :: Result Boolean -- To notify the sender, if it is waiting.
   , value :: Void -- The value to be delivered.
   , show :: Maybe String -- We may want to show the items for debugging.
   , id :: Id
@@ -27,7 +27,7 @@ derive instance Newtype SendItem _
 instance Show SendItem where 
   show (S i) = show { id: i.id, show: i.show }
 
-newItem :: forall a. Show a => a -> Id -> Result Unit -> SendItem
+newItem :: forall a. Show a => a -> Id -> Result Boolean -> SendItem
 newItem a id' result' = wrap 
   { result: result'
   , value: voided a
@@ -35,7 +35,7 @@ newItem a id' result' = wrap
   , id: id'
   }
 
-newItem' :: forall a. a -> Id -> Result Unit -> SendItem
+newItem' :: forall a. a -> Id -> Result Boolean -> SendItem
 newItem' a id' result' = wrap 
   { result: result'
   , value: voided a
@@ -46,7 +46,7 @@ newItem' a id' result' = wrap
 voided :: forall a. a -> Void
 voided = unsafeCoerce
   
-result :: SendItem -> Result Unit
+result :: SendItem -> Result Boolean
 result = unwrap >>> _.result
 
 value :: SendItem -> Void

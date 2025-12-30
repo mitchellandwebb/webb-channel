@@ -26,3 +26,6 @@ next = modify $ \i -> rem (i + 1) 10000
 
 prev :: Id -> Id
 prev = modify $ \i -> rem (i - 1) 10000
+
+initial :: Id
+initial = wrap 0

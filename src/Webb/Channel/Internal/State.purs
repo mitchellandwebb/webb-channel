@@ -4,6 +4,8 @@ import Prelude
 import Webb.State.Prelude
 
 import Effect.Class (class MonadEffect)
+import Webb.Channel.Data.Id (Id)
+import Webb.Channel.Data.Id as Id
 import Webb.Channel.Data.ReceiveQueue (RQueue)
 import Webb.Channel.Data.ReceiveQueue as RQueue
 import Webb.Channel.Data.SendQueue (SQueue)
@@ -14,6 +16,7 @@ type ChannelState =
   { senders :: ShowRef (SQueue)
   , receivers :: ShowRef (RQueue)
   , open :: ShowRef Boolean
+  , id :: ShowRef Id
   }
 
 type CState = ChannelState
@@ -21,10 +24,17 @@ type CState = ChannelState
 newState :: forall m . MonadEffect m => 
   SQueue.SendSize -> m (ChannelState)
 newState size' = do
+  id <- newShowRef $ Id.initial
   senders <- newShowRef $ SQueue.newQueue size'
   receivers <- newShowRef $ RQueue.newQueue
   open <- newShowRef $ true
-  pure { senders, open, receivers }
+  pure { senders, open, receivers, id }
+  
+nextId :: forall m. MonadEffect m => CState -> m Id
+nextId this = do 
+  current <- aread this.id
+  Id.next :> this.id 
+  pure current
   
 isOpen :: forall m . MonadEffect m => CState -> m Boolean
 isOpen this = do aread this.open

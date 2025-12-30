@@ -4,7 +4,9 @@ import Prelude
 
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
+import Webb.Channel.Internal.Sender as Sender
 import Webb.Channel.Internal.State (CState)
+import Webb.Channel.Internal.State as State
 
 
 
@@ -15,14 +17,21 @@ type Channel = CState
 
 -- Sending a value may hang, because if the buffer is full, we
 -- have to wait, in order, for the send to complete.
-send :: forall a. Channel -> a -> Aff Unit
+-- We fail to send when the channel is closed; otherwise, we wait
+-- and see whether we succeed.
+send :: forall a. Channel -> a -> Aff Boolean
 send chan a = do
-  s <- Sender.new chan
-  success <- Sender.send s
+  isOpen <- State.isOpen chan
+  if isOpen then do
+    s <- Sender.new chan
+    success <- Sender.send s a
+    if success then do
+      pure true
+    else do
+      Sender.wait s a
+  else do
+    pure false
   
-  -- Do we succeed in sending immediately?
-  unless success do
-    Sender.wait s
 
 -- Receiving a value may hang, because if no value is present to
 -- take, then we have to wait for a value.
@@ -31,7 +40,7 @@ receive chan = do
   r <- Receiver.new chan
   mvalue <- Receiver.receive r
   case mvalue of
-    -- Did we succeed in getting a value immediately?
+    -- Did we succeed in receiving a value immediately?
     Just value -> do
       pure $ Just value
     Nothing -> do
