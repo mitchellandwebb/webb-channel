@@ -12,9 +12,7 @@ import Webb.Channel.Internal.Receiver as Receiver
 import Webb.Channel.Internal.Sender as Sender
 import Webb.Channel.Internal.State (CState)
 import Webb.Channel.Internal.State as State
-import Webb.Monad.Prelude ((||=))
-
-
+import Webb.Monad.Prelude (notM, (||=))
 
 {- Channel internal functions.
 -}
@@ -27,14 +25,12 @@ type Channel = CState
 -- and see whether we succeed.
 send :: forall a. Channel -> a -> Aff Boolean
 send chan a = do
-  ifM isOpen (do
+  ifM (isOpen chan) (do
     s <- Sender.new chan
     _sendImmediate s a ||= Sender.wait s a
   ) (do
     pure false
   )
-  where
-  isOpen = State.isOpen chan
   
 _sendImmediate :: forall m a. MonadEffect m => 
   Sender.Sender -> a -> m Boolean
@@ -64,7 +60,7 @@ receive chan = do
 -- Buffered sends will succeed and will continue to be received by any
 -- receivers. Once the send buffer is empty, pending and future receivers
 -- will only take a "Closed" value from the buffer.
-close :: Channel -> Aff Unit
+close :: forall m. MonadEffect m => Channel -> m Unit
 close chan = do
   c <- Closer.new chan
   Closer.close c
@@ -74,14 +70,12 @@ close chan = do
 -- (closed, or needed to wait)
 trySend :: forall a m. MonadEffect m => Channel -> a -> m Boolean
 trySend chan a = do
-  ifM isOpen (do 
+  ifM (isOpen chan) (do 
     s <- Sender.new chan
     _sendImmediate s a
   ) (do 
     pure false 
   )
-  where
-  isOpen = State.isOpen chan
   
 -- Try to receive a value immediately if there's anything in the queue.
 -- No waiting is involved. Closing does not affect this -- we can always
@@ -91,4 +85,9 @@ tryReceive chan = do
   r <- Receiver.new chan
   Receiver.receive r
 
+isOpen :: forall m. MonadEffect m => Channel -> m Boolean
+isOpen chan = State.isOpen chan
+
+isClosed :: forall m. MonadEffect m => Channel -> m Boolean
+isClosed chan = notM $ isOpen chan
   

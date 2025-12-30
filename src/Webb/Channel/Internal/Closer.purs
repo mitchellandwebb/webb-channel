@@ -5,7 +5,6 @@ import Webb.State.Prelude
 
 import Data.Foldable as Fold
 import Data.Maybe (Maybe(..))
-import Effect.Aff (Aff)
 import Effect.Class (class MonadEffect)
 import Webb.Channel.Data.ReceiveItem as RItem
 import Webb.Channel.Data.ReceiveQueue as RQueue
@@ -25,7 +24,7 @@ new state = do pure $ C state
 getThis :: forall m. MonadEffect m => Closer -> m CState
 getThis (C state) = do pure state
 
-close :: Closer -> Aff Unit
+close :: forall m. MonadEffect m => Closer -> m Unit
 close c = do
   this <- getThis c
   whenM isOpen do
