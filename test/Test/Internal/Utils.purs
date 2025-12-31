@@ -7,6 +7,7 @@ import Effect.Aff (Aff)
 import Unsafe.Coerce (unsafeCoerce)
 import Webb.Channel.Data.Id as Id
 import Webb.Channel.Data.ReceiveItem as RItem
+import Webb.Channel.Data.ReceiveQueue as RQueue
 import Webb.Channel.Data.SendItem as SItem
 import Webb.Channel.Data.SendQueue as SQueue
 import Webb.Channel.Internal.State (CState)
@@ -53,4 +54,10 @@ sendersIs :: CState -> Array Int -> Aff Unit
 sendersIs this ints = do
   arr <- senders this
   arr === ints
+  
+receiveCountIs :: CState -> Int -> Aff Unit
+receiveCountIs this i = do
+  size <- RQueue.size <: this.receivers
+  size === i
+
 

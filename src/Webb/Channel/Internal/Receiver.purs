@@ -31,11 +31,11 @@ getThis r = do pure $ unwrap r
 receive :: forall m a. MonadEffect m => Receiver -> m (Maybe a)
 receive r = do 
   ifM (hasReceivers ||= noSender) (do 
+    pure Nothing  
+  ) (do 
     s <- nextSender 
     notifySender s 
     pure $ Just (unvoided $ SItem.value s)
-  ) (do 
-    pure Nothing  
   )
   where
   hasReceivers :: m Boolean
