@@ -1,25 +1,19 @@
 package:
   name: webb-channel
   dependencies:
-    - aff
-    - arrays
-    - console
-    - effect
-    - foldable-traversable
-    - maybe
-    - monad-loops
-    - prelude
-    - strings
-    - transformers
-    - tuples
-    - unsafe-coerce
-    - webb-array
-    - webb-refer
-    - webb-monad
-    - webb-mutex
-    - webb-stateful
-    - webb-random
-    - profunctor-lenses
+    - aff: ">=8.0.0 <9.0.0"
+    - effect: ">=4.0.0 <5.0.0"
+    - foldable-traversable: ">=6.0.0 <7.0.0"
+    - integers: ">=6.0.0 <7.0.0"
+    - maybe: ">=6.0.0 <7.0.0"
+    - newtype: ">=5.0.0 <6.0.0"
+    - prelude: ">=6.0.2 <7.0.0"
+    - profunctor-lenses: ">=8.0.0 <9.0.0"
+    - unsafe-coerce: ">=6.0.0 <7.0.0"
+    - webb-array: ">=0.0.1 <0.0.2"
+    - webb-monad: ">=0.0.2 <0.0.3"
+    - webb-mutex: ">=0.0.5 <0.0.6"
+    - webb-refer: ">=0.0.3 <0.0.4"
   test:
     main: Test.Main
     dependencies:
@@ -27,6 +21,14 @@ package:
       - spec-discovery
       - spec-node
       - webb-test
+
+  publish:
+    version: 0.0.1
+    license: BSD-3-Clause
+    location:
+      githubOwner: mitchellandwebb
+      githubRepo: webb-channel
+
 workspace:
   packageSet:
     registry: 69.3.0
@@ -37,8 +39,5 @@ workspace:
     webb-monad: 0.0.2
     webb-stateful: 0.0.2
     webb-random: 0.0.1
-    webb-mutex: 
-      path: '../webb-mutex'
-    webb-array: 
-      path: '../webb-array'
-
+    webb-mutex: 0.0.5
+    webb-array: 0.0.1
