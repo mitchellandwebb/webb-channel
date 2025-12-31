@@ -27,7 +27,11 @@ send :: forall a. Channel -> a -> Aff Boolean
 send chan a = do
   ifM (isOpen chan) (do
     s <- Sender.new chan
-    _sendImmediate s a ||= Sender.wait s a
+    success <- _sendImmediate s a 
+    if success then do
+      pure true
+    else do 
+      Sender.wait s a
   ) (do
     pure false
   )
@@ -90,4 +94,3 @@ isOpen chan = State.isOpen chan
 
 isClosed :: forall m. MonadEffect m => Channel -> m Boolean
 isClosed chan = notM $ isOpen chan
-  

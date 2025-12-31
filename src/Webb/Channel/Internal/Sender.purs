@@ -84,10 +84,10 @@ wait s a = do
 -- Enqueue the item in the free buffer space, if any. Do not wait.
 tryBuffer :: forall m a. MonadEffect m => Sender -> a -> m Boolean
 tryBuffer s a = do
-  item <- buildItem s a
   ifM (isFull s) (do 
     pure false
   ) (do 
+    item <- buildItem s a
     enqueue s item
     pure true
   )
