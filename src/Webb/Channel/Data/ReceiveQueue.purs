@@ -45,3 +45,6 @@ size = unwrap >>> Array.size
 
 removeId :: Id -> RQueue -> RQueue
 removeId id = modify $ Array.reject (RItem.hasId id)
+
+swap :: Array RItem -> RQueue -> RQueue
+swap arr = modify $ const arr

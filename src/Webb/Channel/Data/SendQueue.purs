@@ -3,7 +3,7 @@ module Webb.Channel.Data.SendQueue where
 import Prelude
 
 import Data.Generic.Rep (class Generic)
-import Data.Lens (Lens', over)
+import Data.Lens (Lens', over, set)
 import Data.Lens.Record (prop)
 import Data.Maybe (Maybe)
 import Data.Newtype (class Newtype, modify, unwrap, wrap)
@@ -96,3 +96,6 @@ removePending :: SendQueue -> SendQueue
 removePending this@(B s) = let 
   count = Array.size $ pending this
   in wrap $ over _array (Array.dropEnd count) s
+  
+swap :: Array SItem -> SendQueue -> SendQueue
+swap items = modify $ set _array items
