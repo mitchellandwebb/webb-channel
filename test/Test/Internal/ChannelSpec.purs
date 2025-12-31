@@ -130,11 +130,6 @@ spec = describe "Channel internals" do
     Chan.isClosed chan ?= true
     
   where
-  close chan = do 
-    Chan.close chan
-
-  newRef = do newShowRef ([] :: Array Int)
-  
   {-}
   print :: Chan.Channel -> Aff Unit
   print c = do
@@ -142,6 +137,11 @@ spec = describe "Channel internals" do
     traceM str
   -}
     
+  close chan = do 
+    Chan.close chan
+
+  newRef = do newShowRef ([] :: Array Int)
+  
   new i = do
     state <- State.newState (SQueue.Finite i)
     pure state
