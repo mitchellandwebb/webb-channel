@@ -11,11 +11,20 @@ import Webb.Monad.Prelude (delayInt, launch_)
 
 spec :: Spec Unit
 spec = describe "Channel internals" do
-  it "can send to receiver" do
+  it "can receive from sender" do
     ref <- newShowRef 0
     chan <- new 0
     send chan ref 10
     receive chan ref
+    
+    delayInt 5
+    aread ref ?= 10
+    
+  it "can send to receiver" do
+    ref <- newShowRef 0
+    chan <- new 0
+    receive chan ref
+    send chan ref 10
     
     delayInt 5
     aread ref ?= 10
