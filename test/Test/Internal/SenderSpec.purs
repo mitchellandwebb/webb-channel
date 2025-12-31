@@ -4,7 +4,7 @@ import Test.Prelude
 
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
-import Test.Internal.Utils (ritem, sitem, unvoidInt)
+import Test.Internal.Utils (ritem, unvoidInt)
 import Test.Internal.Utils as Utils
 import Webb.Channel.Data.ReceiveItem as RItem
 import Webb.Channel.Data.ReceiveQueue as RQueue
@@ -61,13 +61,11 @@ spec = describe "Sender internals" do
 
   bufferIs s ints = do
     this <- Sender.getThis s
-    arr <- Utils.buffer this
-    arr === ints
+    Utils.bufferIs this ints
     
   sendersIs s ints = do
     this <- Sender.getThis s
-    arr <- Utils.senders this
-    arr === ints
+    Utils.sendersIs this ints
 
   tryBuffer s i = do
     Sender.tryBuffer s i

@@ -1,6 +1,6 @@
 module Test.Internal.Utils where
 
-import Prelude
+import Test.Prelude
 import Webb.State.Prelude
 
 import Effect.Aff (Aff)
@@ -9,6 +9,7 @@ import Webb.Channel.Data.Id as Id
 import Webb.Channel.Data.ReceiveItem as RItem
 import Webb.Channel.Data.SendItem as SItem
 import Webb.Channel.Data.SendQueue as SQueue
+import Webb.Channel.Internal.State (CState)
 import Webb.Channel.Internal.State as State
 import Webb.Result as Result
 
@@ -43,4 +44,13 @@ svalue item = let
   value = SItem.value item
   in unvoidInt value
 
+bufferIs :: CState -> Array Int -> Aff Unit
+bufferIs this ints = do
+  arr <- buffer this
+  arr === ints
+  
+sendersIs :: CState -> Array Int -> Aff Unit
+sendersIs this ints = do
+  arr <- senders this
+  arr === ints
 
