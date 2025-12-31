@@ -60,4 +60,9 @@ receiveCountIs this i = do
   size <- RQueue.size <: this.receivers
   size === i
 
+sendCountIs :: CState -> Int -> Aff Unit
+sendCountIs this i = do
+  size <- SQueue.size <: this.senders
+  size === i
+
 
