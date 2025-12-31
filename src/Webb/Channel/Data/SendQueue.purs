@@ -80,6 +80,9 @@ first = unwrap >>> views _array (Array.first)
 drop :: Int -> SendQueue -> SendQueue 
 drop n = modify $ over _array (Array.drop n)
 
+buffer :: SendQueue -> Array SItem
+buffer q = toArray $ removePending q
+
 -- Remove the id if it no longer needs to be in the queue, because the
 -- one waiting for it has been _cancelled_.
 removeId :: Id -> SendQueue -> SendQueue
@@ -99,3 +102,5 @@ removePending this@(B s) = let
   
 swap :: Array SItem -> SendQueue -> SendQueue
 swap items = modify $ set _array items
+
+
