@@ -21,12 +21,11 @@ import Webb.Channel.Internal.Channel as Chan
 import Webb.Channel.Internal.State (ChannelState, CState)
 import Webb.Channel.Internal.State as State
 
-newtype Channel :: forall k. k -> Type
+newtype Channel :: Type -> Type
 newtype Channel a = C ChannelState
 
 derive newtype instance Show (Channel a)
 
-type Chan :: forall k. k -> Type
 type Chan a = Channel a
 
 newChannel :: forall m a. MonadEffect m => SendSize -> m (Channel a)
