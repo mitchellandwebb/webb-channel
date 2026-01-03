@@ -12,7 +12,7 @@ package:
     - unsafe-coerce: ">=6.0.0 <7.0.0"
     - webb-array: ">=0.0.1 <0.0.2"
     - webb-monad: ">=0.0.2 <0.0.3"
-    - webb-mutex: ">=0.0.5 <0.0.6"
+    - webb-mutex: ">=0.0.7 <0.0.8"
     - webb-refer: ">=0.0.3 <0.0.4"
   test:
     main: Test.Main
@@ -23,7 +23,7 @@ package:
       - webb-test
 
   publish:
-    version: 0.0.2
+    version: 0.0.3
     license: BSD-3-Clause
     location:
       githubOwner: mitchellandwebb
@@ -39,5 +39,5 @@ workspace:
     webb-monad: 0.0.2
     webb-stateful: 0.0.2
     webb-random: 0.0.1
-    webb-mutex: 0.0.5
+    webb-mutex: 0.0.7
     webb-array: 0.0.1
